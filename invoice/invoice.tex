@@ -1,0 +1,36 @@
+\documentclass{article}
+\RequirePackage[letterpaper, margin=1in]{geometry} % 1 inch margins required
+
+% text
+\RequirePackage[utf8]{inputenc}
+\setlength\parindent{0pt}
+\setlength{\parskip}{1em}
+\renewcommand{\familydefault}{\sfdefault}
+
+\usepackage{array}
+\newcolumntype{P}[1]{>{\raggedleft\arraybackslash}p{#1}}
+
+\usepackage{soul}
+
+\begin{document}
+invoice: WHIP-NMRR circulator driver \\
+request date: 2018-08-08 \\
+customer: Nick Staudaher \\
+group: Landis
+
+\begin{tabular}{
+    P{\dimexpr 0.15\linewidth-2\tabcolsep}|
+    P{\dimexpr 0.4\linewidth-2\tabcolsep}|
+    P{\dimexpr 0.075\linewidth-2\tabcolsep}|
+    P{\dimexpr 0.075\linewidth-2\tabcolsep}|
+    P{\dimexpr 0.075\linewidth-2\tabcolsep}|
+    p{\dimexpr 0.225\linewidth-2\tabcolsep}}
+  item & part & rate & count & total & comment \\ \hline
+  enclosure & CU-3009-A:BUD & 16.00 & 1 & 16.00 & \\
+\end{tabular}
+parts total: \$XX.XX \\
+XX hours labor (Blaise Thompson): \$XXX \\
+total bill: \$XX.XX \\
+billed XXXX-XX-XX - internal ID XXXX \\
+
+\end{document}
