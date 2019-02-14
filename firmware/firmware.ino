@@ -1,0 +1,129 @@
+// firmware: circulator-driver
+
+// 7SEG display (I2C communication)
+#include <Wire.h> // Include the Arduino SPI library
+const byte s7sAddress = 0x71;
+char tempString[10];  // used with sprintf to create strings
+
+// rotary encoder
+#include <Encoder.h>
+Encoder knob(2, 3);  // interrupt, registered in library
+long frequency  = 1000;  // mHz
+
+// control pins
+int ledPin = 13; //
+int ledState = LOW;             // ledState used to set the LED
+float interval = 1000;           // interval at which to blink (milliseconds)
+unsigned long previousMillis = 0;        // will store last time LED was updated
+
+void setup()
+{
+  // 7SEG display (I2C communication)
+  Wire.begin();  // Initialize hardware I2C pins
+  clearDisplayI2C();  // Clears display, resets cursor
+  s7sSendStringI2C("-HI-");
+  setDecimalsI2C(0b111111);  // Turn on all decimals, colon, apos
+  setBrightnessI2C(255);  // 0 to 255
+  clearDisplayI2C();
+  setDecimalsI2C(0b00000010);
+  sprintf(tempString, "%04d", frequency / 10);
+  s7sSendStringI2C(tempString);
+  // rotary encoder
+  knob.write(0);
+  // serial
+  Serial.begin(9600);
+  // control pins
+  pinMode(ledPin, OUTPUT);
+}
+
+void loop() {
+  // handle input from rotary encoder
+  int x = knob.read();
+  int sign = (x > 0) - (x < 0);
+  if (abs(x) >= 4) {
+    if (frequency == 99000) {
+      if (sign == -1) {
+        frequency -= 1000;
+      }
+    }
+    else if (10000 < frequency) {
+      frequency += 1000 * sign;
+    }
+    else if (frequency == 10000) {
+      if (sign == 1) frequency += 1000;
+      if (sign == -1) frequency -= 100;
+    }
+    else if ((1000 < frequency) && (frequency < 10000)) {
+      frequency += 100 * sign;
+    }
+    else if (frequency == 1000) {
+      if (sign == 1) frequency += 100;
+      if (sign == -1) frequency -= 10;
+    }
+    else if ((20 <= frequency) && (frequency < 1000)) {
+      frequency += 10 * sign;
+    }
+    else{
+      if (sign == 1) {
+        frequency += 10;
+      }
+    }
+    sprintf(tempString, "%04d", frequency / 10);
+    s7sSendStringI2C(tempString);
+    knob.write(0);
+    interval = 1e6 / (float)frequency;
+  }
+  //
+  unsigned long currentMillis = millis();
+  if (currentMillis - previousMillis >= interval) {
+    previousMillis = currentMillis;
+    if (ledState == LOW) {
+      ledState = HIGH;
+    } else {
+      ledState = LOW;
+    }
+    digitalWrite(ledPin, ledState);
+  }
+}
+
+
+void s7sSendStringI2C(String toSend) {
+  // This custom function works somewhat like a serial.print.
+  //  You can send it an array of chars (string) and it'll print
+  //  the first 4 characters in the array.
+  Wire.beginTransmission(s7sAddress);
+  for (int i=0; i<4; i++) {
+    Wire.write(toSend[i]);
+  }
+  Wire.endTransmission();
+}
+
+void clearDisplayI2C() {
+  // Send the clear display command (0x76)
+  //  This will clear the display and reset the cursor
+  Wire.beginTransmission(s7sAddress);
+  Wire.write(0x76);  // Clear display command
+  Wire.endTransmission();
+}
+
+void setBrightnessI2C(byte value) {
+  // Set the displays brightness. Should receive byte with the value
+  //  to set the brightness to
+  //  dimmest------------->brightest
+  //     0--------127--------255
+  Wire.beginTransmission(s7sAddress);
+  Wire.write(0x7A);  // Set brightness command byte
+  Wire.write(value);  // brightness data byte
+  Wire.endTransmission();
+}
+
+void setDecimalsI2C(byte decimals) {
+  // Turn on any, none, or all of the decimals.
+  //  The six lowest bits in the decimals parameter sets a decimal 
+  //  (or colon, or apostrophe) on or off. A 1 indicates on, 0 off.
+  //  [MSB] (X)(X)(Apos)(Colon)(Digit 4)(Digit 3)(Digit2)(Digit1)
+  Wire.beginTransmission(s7sAddress);
+  Wire.write(0x77);
+  Wire.write(decimals);
+  Wire.endTransmission();
+}
