@@ -1,14 +1,14 @@
-This is pdfTeX, Version 3.14159265-2.6-1.40.19 (TeX Live 2019/dev/Debian) (preloaded format=pdflatex 2018.11.19)  12 DEC 2018 13:41
+This is pdfTeX, Version 3.14159265-2.6-1.40.19 (TeX Live 2019/dev/Debian) (preloaded format=pdflatex 2019.2.11)  14 FEB 2019 15:25
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
 **invoice.tex
 (./invoice.tex
-LaTeX2e <2018-04-01> patch level 5
+LaTeX2e <2018-12-01>
 (/usr/share/texlive/texmf-dist/tex/latex/base/article.cls
-Document Class: article 2014/09/29 v1.4h Standard LaTeX document class
+Document Class: article 2018/09/03 v1.4i Standard LaTeX document class
 (/usr/share/texlive/texmf-dist/tex/latex/base/size10.clo
-File: size10.clo 2014/09/29 v1.4h Standard LaTeX file (size option)
+File: size10.clo 2018/09/03 v1.4i Standard LaTeX file (size option)
 )
 \c@part=\count80
 \c@section=\count81
@@ -53,19 +53,19 @@ Package: ifxetex 2010/09/12 v0.6 Provides ifxetex conditional
 \Gm@dimlist=\toks15
 )
 (/usr/share/texlive/texmf-dist/tex/latex/base/inputenc.sty
-Package: inputenc 2018/04/06 v1.3b Input encoding file
+Package: inputenc 2018/08/11 v1.3c Input encoding file
 \inpenc@prehook=\toks16
 \inpenc@posthook=\toks17
 )
 (/usr/share/texlive/texmf-dist/tex/latex/tools/array.sty
-Package: array 2018/04/30 v2.4h Tabular extension package (FMi)
+Package: array 2018/12/30 v2.4k Tabular extension package (FMi)
 \col@sep=\dimen111
-\ar@mcellbox=\box26
+\ar@mcellbox=\box27
 \extrarowheight=\dimen112
 \NC@list=\toks18
 \extratabsurround=\skip43
 \backup@length=\skip44
-\ar@cellbox=\box27
+\ar@cellbox=\box28
 )
 (/usr/share/texlive/texmf-dist/tex/latex/soul/soul.sty
 Package: soul 2003/11/17 v2.4 letterspacing/underlining (mf)
@@ -133,12 +133,12 @@ LaTeX Font Info:    External font `cmex10' loaded for size
 LaTeX Font Info:    External font `cmex10' loaded for size
 (Font)              <5> on input line 21.
 
-Overfull \hbox (1.99274pt too wide) in paragraph at lines 21--35
+Overfull \hbox (1.99274pt too wide) in paragraph at lines 21--36
 [][]
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 21--35
+Underfull \hbox (badness 10000) in paragraph at lines 21--36
 
  []
 
@@ -146,16 +146,16 @@ Underfull \hbox (badness 10000) in paragraph at lines 21--35
 
 {/var/lib/texmf/fonts/map/pdftex/updmap/pdftex.map}] (./invoice.aux) ) 
 Here is how much of TeX's memory you used:
- 978 strings out of 492638
- 13174 string characters out of 6131709
- 81681 words of memory out of 5000000
- 4922 multiletter control sequences out of 15000+600000
+ 978 strings out of 492615
+ 13174 string characters out of 6131390
+ 82175 words of memory out of 5000000
+ 4945 multiletter control sequences out of 15000+600000
  4258 words of font info for 16 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
  24i,8n,32p,191b,105s stack positions out of 5000i,500n,10000p,200000b,80000s
 </usr/sha
 re/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmss10.pfb>
-Output written on invoice.pdf (1 page, 14506 bytes).
+Output written on invoice.pdf (1 page, 15127 bytes).
 PDF statistics:
  12 PDF objects out of 1000 (max. 8388607)
  7 compressed objects within 1 object stream
