@@ -7,13 +7,35 @@ char tempString[10];  // used with sprintf to create strings
 
 // rotary encoder
 #include <Encoder.h>
-Encoder knob(2, 3);  // interrupt, registered in library
-long frequency  = 1000;  // mHz
+Encoder knob(1, 0);  // interrupt, registered in library
+long frequency  = 2000;  // mHz
 
 // control pins
-int ledPin = 13; //
-int ledState = LOW;             // ledState used to set the LED
-float interval = 1000;           // interval at which to blink (milliseconds)
+int relay1 = 2;  // physical pin 4
+int relay2 = A3;  // physical pin 26
+int relay3 = A2;  // physical pin 25
+int relay4 = A1;  // physical pin 24
+int relay5 = A0;  // physical pin 23
+
+// buttons
+int bypass_button = 7;  // physical pin 13
+int bypass_LED = 9;  // physical pin 15
+int run_button = 6;  // physical pin 12
+int run_LED = 8;  // physical pin 14
+
+// TTL
+int TTL1 = 4;  // physical pin 6
+int TTL1_state = HIGH;
+int TTL2 = 3;  // physical pin 5
+int TTL2_state = HIGH;
+
+// run control
+bool bypass_state = LOW;
+bool run_state = LOW;
+
+// timing control
+bool state = LOW;
+float period = 1000;           // interval at which to blink (milliseconds)
 unsigned long previousMillis = 0;        // will store last time LED was updated
 
 void setup()
@@ -32,16 +54,53 @@ void setup()
   knob.write(0);
   // serial
   Serial.begin(9600);
-  // control pins
-  pinMode(ledPin, OUTPUT);
+  // output pins
+  pinMode(relay1, OUTPUT);
+  pinMode(relay2, OUTPUT);
+  pinMode(relay3, OUTPUT);
+  pinMode(relay4, OUTPUT);
+  pinMode(relay5, OUTPUT);
+  pinMode(bypass_LED, OUTPUT);
+  pinMode(run_LED, OUTPUT);
+  // input pins
+  pinMode(bypass_button, INPUT_PULLUP);
+  pinMode(run_button, INPUT_PULLUP);
+  pinMode(TTL1, INPUT_PULLUP);
+  pinMode(TTL2, INPUT_PULLUP);
+  //
+  delay(1000);
 }
 
 void loop() {
-  // handle input from rotary encoder
+  // buttons (active low)
+  if (digitalRead(bypass_button) == LOW) {
+    while(digitalRead(bypass_button) == LOW) {
+      delay(1);  // ms
+    }
+    bypass_state = !bypass_state;
+  }
+  digitalWrite(bypass_LED, !bypass_state);
+  if (digitalRead(run_button) == LOW) {
+    while(digitalRead(run_button) == LOW) {
+      delay(1);  // ms
+    }
+    run_state = !run_state;
+  }
+  // TTL
+  if (digitalRead(TTL1) != TTL1_state) {
+    TTL1_state = !TTL1_state;
+    run_state = TTL1_state; 
+  }
+  if (digitalRead(TTL2) != TTL2_state) {
+    TTL2_state = !TTL2_state;
+    bypass_state= TTL2_state;
+  }
+  digitalWrite(run_LED, !run_state);
+  // input from rotary encoder
   int x = knob.read();
   int sign = (x > 0) - (x < 0);
   if (abs(x) >= 4) {
-    if (frequency == 99000) {
+    if (frequency == 25000) {
       if (sign == -1) {
         frequency -= 1000;
       }
@@ -71,21 +130,23 @@ void loop() {
     sprintf(tempString, "%04d", frequency / 10);
     s7sSendStringI2C(tempString);
     knob.write(0);
-    interval = 1e6 / (float)frequency;
+    period = 1e6 / (float)frequency;
   }
-  //
+  // control cycle relays
   unsigned long currentMillis = millis();
-  if (currentMillis - previousMillis >= interval) {
+  if (currentMillis - previousMillis >= (period / 2)) {
     previousMillis = currentMillis;
-    if (ledState == LOW) {
-      ledState = HIGH;
-    } else {
-      ledState = LOW;
+    if (run_state == HIGH) {
+      state = !state;
     }
-    digitalWrite(ledPin, ledState);
+    digitalWrite(relay1, state);  // A
+    digitalWrite(relay4, state);  // 2, 4
+    digitalWrite(relay2, !state);  // B
+    digitalWrite(relay3, !state);  // 1, 3
   }
+  // control bypass relay
+  digitalWrite(relay5, !bypass_state);
 }
-
 
 void s7sSendStringI2C(String toSend) {
   // This custom function works somewhat like a serial.print.
