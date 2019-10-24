@@ -79,7 +79,7 @@ void loop() {
     }
     bypass_state = !bypass_state;
   }
-  digitalWrite(bypass_LED, !bypass_state);
+  digitalWrite(bypass_LED, !bypass_state);  // active low
   if (digitalRead(run_button) == LOW) {
     while(digitalRead(run_button) == LOW) {
       delay(1);  // ms
@@ -87,15 +87,17 @@ void loop() {
     run_state = !run_state;
   }
   // TTL
-  if (digitalRead(TTL1) != TTL1_state) {
-    TTL1_state = !TTL1_state;
-    run_state = TTL1_state; 
+  int ttl1 = digitalRead(TTL1);
+  if (ttl1 != TTL1_state) {
+    TTL1_state = ttl1;
+    run_state = !ttl1;
   }
-  if (digitalRead(TTL2) != TTL2_state) {
-    TTL2_state = !TTL2_state;
-    bypass_state= TTL2_state;
+  int ttl2 = digitalRead(TTL2);
+  if (ttl2 != TTL2_state) {
+    TTL2_state = ttl2;
+    bypass_state = !ttl2;
   }
-  digitalWrite(run_LED, !run_state);
+  digitalWrite(run_LED, !run_state);  // active low
   // input from rotary encoder
   int x = knob.read();
   int sign = (x > 0) - (x < 0);
@@ -145,7 +147,7 @@ void loop() {
     digitalWrite(relay3, !state);  // 1, 3
   }
   // control bypass relay
-  digitalWrite(relay5, !bypass_state);
+  digitalWrite(relay5, !bypass_state);  // low active
 }
 
 void s7sSendStringI2C(String toSend) {
