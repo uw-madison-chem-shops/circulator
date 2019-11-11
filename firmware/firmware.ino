@@ -96,6 +96,7 @@ void loop() {
   if (ttl2 != TTL2_state) {
     TTL2_state = ttl2;
     bypass_state = !ttl2;
+    run_state = ttl2;
   }
   digitalWrite(run_LED, !run_state);  // active low
   // input from rotary encoder
