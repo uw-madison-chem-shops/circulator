@@ -35,7 +35,7 @@ bool run_state = LOW;
 
 // timing control
 bool state = LOW;
-float period = 1000;           // interval at which to blink (milliseconds)
+float period = 1e6;               // interval at which to blink (milliseconds)
 unsigned long previousMillis = 0;        // will store last time LED was updated
 
 void setup()
@@ -68,20 +68,21 @@ void setup()
   pinMode(TTL1, INPUT_PULLUP);
   pinMode(TTL2, INPUT_PULLUP);
   //
+  period = 1e6 / (float)frequency;
   delay(1000);
 }
 
 void loop() {
   // buttons (active low)
   if (digitalRead(bypass_button) == LOW) {
-    while(digitalRead(bypass_button) == LOW) {
+    while (digitalRead(bypass_button) == LOW) {
       delay(1);  // ms
     }
     bypass_state = !bypass_state;
   }
   digitalWrite(bypass_LED, !bypass_state);  // active low
   if (digitalRead(run_button) == LOW) {
-    while(digitalRead(run_button) == LOW) {
+    while (digitalRead(run_button) == LOW) {
       delay(1);  // ms
     }
     run_state = !run_state;
@@ -125,7 +126,7 @@ void loop() {
     else if ((20 <= frequency) && (frequency < 1000)) {
       frequency += 10 * sign;
     }
-    else{
+    else {
       if (sign == 1) {
         frequency += 10;
       }
@@ -156,7 +157,7 @@ void s7sSendStringI2C(String toSend) {
   //  You can send it an array of chars (string) and it'll print
   //  the first 4 characters in the array.
   Wire.beginTransmission(s7sAddress);
-  for (int i=0; i<4; i++) {
+  for (int i = 0; i < 4; i++) {
     Wire.write(toSend[i]);
   }
   Wire.endTransmission();
@@ -183,7 +184,7 @@ void setBrightnessI2C(byte value) {
 
 void setDecimalsI2C(byte decimals) {
   // Turn on any, none, or all of the decimals.
-  //  The six lowest bits in the decimals parameter sets a decimal 
+  //  The six lowest bits in the decimals parameter sets a decimal
   //  (or colon, or apostrophe) on or off. A 1 indicates on, 0 off.
   //  [MSB] (X)(X)(Apos)(Colon)(Digit 4)(Digit 3)(Digit2)(Digit1)
   Wire.beginTransmission(s7sAddress);
